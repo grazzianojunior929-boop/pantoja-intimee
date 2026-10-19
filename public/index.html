@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pantoja Intimeé · Moda Íntima Feminina</title>
+<meta name="description" content="Pantoja Intimeé: lingeries, calcinhas, pijamas, kits e sex shop. O íntimo que valoriza você. Envios para todo o Brasil.">
+<meta name="theme-color" content="#5b0a12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%235b0a12'/%3E%3Cpath d='M14 44l3-20 9 11 6-15 6 15 9-11 3 20z' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Montserrat:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/loja.css">
+</head>
+<body>
+
+<div class="idade oculto" id="idade" role="dialog" aria-modal="true" aria-labelledby="idade-t">
+  <div class="idade-box">
+    <svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 34 L10 10 L22 24 L32 4 L42 24 L54 10 L58 34 Z"/><circle cx="10" cy="10" r="2" fill="currentColor"/><circle cx="32" cy="4" r="2" fill="currentColor"/><circle cx="54" cy="10" r="2" fill="currentColor"/><path d="M4 38h56"/></svg>
+    <h2 id="idade-t">Bem-vinda à Pantoja Intimeé</h2>
+    <p>Este site contém produtos de sex shop destinados ao público adulto. Você confirma que tem 18 anos ou mais?</p>
+    <div class="cta-row">
+      <button class="btn btn-ouro" id="idade-sim">Sim, tenho 18+</button>
+      <a class="btn btn-linha" href="https://www.google.com">Sair</a>
+    </div>
+  </div>
+</div>
+
+<div class="faixa" aria-hidden="true"><div class="faixa-track" id="faixa"></div></div>
+
+<header>
+  <div class="container nav">
+    <button class="icone-btn hamb" id="abrirMenu" aria-label="Abrir menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+    </button>
+    <a href="/" class="logo" aria-label="Pantoja Intimeé - início">
+      <svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 34 L10 10 L22 24 L32 4 L42 24 L54 10 L58 34 Z"/><circle cx="10" cy="10" r="2.4" fill="currentColor"/><circle cx="32" cy="4" r="2.4" fill="currentColor"/><circle cx="54" cy="10" r="2.4" fill="currentColor"/></svg>
+      <span class="logo-txt"><b>PANTOJA</b><b>INTIMEÉ</b><small>MODA ÍNTIMA FEMININA</small></span>
+    </a>
+    <nav class="menu" id="menu">
+      <a href="/">Início</a>
+      <a href="/loja">Loja</a>
+      <a href="/loja?categoria=conjuntos">Lingeries</a>
+      <a href="/loja?categoria=kits">Kits</a>
+      <a href="/#duvidas">Dúvidas</a>
+    </nav>
+    <div class="acoes">
+      <a class="icone-btn link-insta" href="https://www.instagram.com/pantojaintimee01/" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+      </a>
+      <button class="icone-btn" id="abrirSacola" aria-label="Abrir sacola">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 8h14l-1 13H6L5 8z"/><path d="M9 8V6a3 3 0 016 0v2"/></svg>
+        <span class="badge" id="badge">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="app"><div class="carregando"></div></main>
+
+<footer>
+  <div class="container">
+    <div class="rod-grid">
+      <div>
+        <a href="/" class="logo" style="color:#fff">
+          <svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 34 L10 10 L22 24 L32 4 L42 24 L54 10 L58 34 Z"/><circle cx="10" cy="10" r="2.4" fill="currentColor"/><circle cx="32" cy="4" r="2.4" fill="currentColor"/><circle cx="54" cy="10" r="2.4" fill="currentColor"/></svg>
+          <span class="logo-txt"><b>PANTOJA</b><b>INTIMEÉ</b><small>MODA ÍNTIMA FEMININA</small></span>
+        </a>
+        <p style="margin-top:1rem;max-width:20rem">Lingeries &amp; Sex Shop. O íntimo que valoriza você.</p>
+        <div class="sociais">
+          <a class="link-insta" href="https://www.instagram.com/pantojaintimee01/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+          <a href="#" class="link-zap" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.4.6-.3.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 1.9 1.1.9 2 1.2 2.3 1.4.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></a>
+        </div>
+      </div>
+      <div><h5>Loja</h5><ul id="rodCats"></ul></div>
+      <div><h5>Ajuda</h5><ul><li><a href="/#duvidas">Perguntas frequentes</a></li><li><a href="/#duvidas">Envios</a></li><li><a href="/#duvidas">Encomendas</a></li><li><a href="/#duvidas">Trocas</a></li></ul></div>
+      <div><h5>Contato</h5><ul><li>Aliança - TO</li><li>Loja virtual</li><li><a href="#" class="link-zap" target="_blank" rel="noopener">WhatsApp</a></li><li><a class="link-insta" href="https://www.instagram.com/pantojaintimee01/" target="_blank" rel="noopener">@pantojaintimee01</a></li></ul></div>
+    </div>
+    <div class="copy"><span>© <span id="ano"></span> Pantoja Intimeé · Moda Íntima Feminina</span><span>Venda de produtos adultos somente para maiores de 18 anos.</span></div>
+  </div>
+</footer>
+
+<a class="zap link-zap" href="#" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.4.6-.3.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 1.9 1.1.9 2 1.2 2.3 1.4.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>
+</a>
+
+<div class="veu" id="veu"></div>
+<aside class="gaveta" id="gaveta" aria-label="Sacola de compras">
+  <div class="gav-topo">
+    <h3>Sua sacola</h3>
+    <button class="icone-btn" id="fecharSacola" aria-label="Fechar sacola"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="gav-itens" id="itens"></div>
+  <div class="gav-rodape" id="rodapeSacola"></div>
+</aside>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script type="module" src="/js/loja.js"></script>
+</body>
+</html>

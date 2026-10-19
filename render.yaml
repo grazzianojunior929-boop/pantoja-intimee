@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: pantoja-intimee
+    runtime: node
+    plan: starter
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/config
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATA_DIR
+        value: /var/data
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@pantojaintimee.com.br
+      - key: ADMIN_SENHA
+        sync: false
+      - key: WHATSAPP
+        value: "5563992783793"
+      - key: BASE_URL
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+    disk:
+      name: dados
+      mountPath: /var/data
+      sizeGB: 1
