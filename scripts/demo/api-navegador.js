@@ -274,8 +274,8 @@ document.addEventListener('click', (e) => {
   e.preventDefault();
   location.hash = a.getAttribute('href').slice(1);
 });
-document.getElementById('demo-reiniciar').onclick = () => {
-  if (!confirm('Apagar os pedidos e alterações da demonstração e voltar aos produtos de exemplo?')) return;
+document.getElementById('demo-reiniciar').onclick = async () => {
+  if (!(await confirmar('Apagar os pedidos e alterações da demonstração e voltar aos produtos de exemplo?', { ok: 'Reiniciar' }))) return;
   globalThis.__reiniciarDemo__();
   try { localStorage.removeItem('pi_sacola_v2'); } catch {}
   location.hash = '/';

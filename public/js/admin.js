@@ -1,4 +1,4 @@
-import { ICONES, NOMES_ICONES, esc, brl, midia, ilustracao, api, DEMO } from './comum.js';
+import { ICONES, NOMES_ICONES, esc, brl, midia, ilustracao, api, confirmar, DEMO } from './comum.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const raiz = $('#raiz');
@@ -335,7 +335,7 @@ async function abrirEditorProduto(id) {
   };
 
   $('#excluir')?.addEventListener('click', async () => {
-    if (!confirm(`Excluir “${p.nome}”? Isso não pode ser desfeito.\n\nDica: para só esconder da loja, desmarque “Visível na loja”.`)) return;
+    if (!(await confirmar(`Excluir “${p.nome}”? Isso não pode ser desfeito.\n\nDica: para só esconder da loja, desmarque “Visível na loja”.`, { ok: 'Excluir' }))) return;
     try {
       await api(`/api/admin/produtos/${id}`, { metodo: 'DELETE' });
       fecharEditor(); toast('Produto excluído'); rotear();
@@ -384,7 +384,7 @@ async function telaCategorias(c) {
       catch (err) { toast(err.message); }
     };
     tr.querySelector('[data-excluir]').onclick = async () => {
-      if (!confirm(`Excluir a categoria “${val('nome')}”?`)) return;
+      if (!(await confirmar(`Excluir a categoria “${val('nome')}”? Os produtos dela ficam sem categoria.`, { ok: 'Excluir' }))) return;
       await api(`/api/admin/categorias/${id}`, { metodo: 'DELETE' }); toast('Categoria excluída'); rotear();
     };
   });

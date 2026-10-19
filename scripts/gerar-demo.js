@@ -28,6 +28,34 @@ const script = [
   `{\n${comoBloco(ler('public/js/admin.js'))}\n}`,
 ].join('\n\n');
 
+const estilos = `<style id="css-loja">${ler('public/css/loja.css')}</style>
+<style id="css-admin">${ler('public/css/admin.css')}</style>
+<style>
+  .demo-faixa{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;font:600 11px/1 Montserrat,system-ui,sans-serif;letter-spacing:.06em;
+    background:#f1dcb5;color:#22030a;padding:6px 12px;position:relative;z-index:60}
+  .demo-faixa a,.demo-faixa button{font:inherit;color:#f1dcb5;background:#5b0a12;border:0;border-radius:999px;padding:5px 12px;cursor:pointer;text-decoration:none}
+  .demo-faixa button{background:transparent;color:#5b0a12;border:1px solid rgba(91,10,18,.4)}
+  /* conteúdo visível desde o primeiro quadro (miniaturas e links compartilhados) */
+  .rev{opacity:1;transform:none}
+  /* respeita as bordas do celular quando aberto dentro de apps */
+  header{top:env(safe-area-inset-top,0px)}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:70;background:#5b0a12}
+  .zap{right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+</style>`;
+
+const corpo = `<div class="demo-faixa"><span>DEMONSTRAÇÃO · pedidos e alterações ficam só no seu navegador</span><a href="#/">Loja</a><a href="#/admin">Painel</a><button id="demo-reiniciar" type="button">Reiniciar</button></div>
+<div id="demo-loja">
+${corpoLoja}
+</div>
+<div id="demo-admin" hidden>
+  <div id="raiz"></div>
+  <div class="toast" id="toastAdmin" role="status"></div>
+</div>
+<script type="module">
+${semFimDeScript(script)}
+</script>`;
+
+// Arquivo completo, para abrir direto no navegador
 const html = `<!doctype html>
 <html lang="pt-BR">
 <head>
@@ -39,30 +67,22 @@ ${favicon}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 ${fontes}
-<style id="css-loja">${ler('public/css/loja.css')}</style>
-<style id="css-admin">${ler('public/css/admin.css')}</style>
-<style>
-  .demo-faixa{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;font:600 11px/1 Montserrat,system-ui,sans-serif;letter-spacing:.06em;
-    background:#f1dcb5;color:#22030a;padding:6px 12px;position:relative;z-index:60}
-  .demo-faixa a,.demo-faixa button{font:inherit;color:#f1dcb5;background:#5b0a12;border:0;border-radius:999px;padding:5px 12px;cursor:pointer;text-decoration:none}
-  .demo-faixa button{background:transparent;color:#5b0a12;border:1px solid rgba(91,10,18,.4)}
-</style>
+${estilos}
 </head>
 <body>
-<div class="demo-faixa"><span>DEMONSTRAÇÃO · os dados ficam só no seu navegador</span><a href="#/">Loja</a><a href="#/admin">Painel</a><button id="demo-reiniciar" type="button">Reiniciar</button></div>
-<div id="demo-loja">
-${corpoLoja}
-</div>
-<div id="demo-admin" hidden>
-  <div id="raiz"></div>
-  <div class="toast" id="toastAdmin" role="status"></div>
-</div>
-<script type="module">
-${semFimDeScript(script)}
-</script>
+${corpo}
 </body>
 </html>
 `;
+
+// Versão para publicar como link (a página recebe o esqueleto html/head/body ao ser publicada)
+const fragmento = `<title>Pantoja Intimeé</title>
+${fontes}
+${estilos}
+${corpo}
+`;
+fs.mkdirSync(path.join(raiz, 'dist', 'link'), { recursive: true });
+fs.writeFileSync(path.join(raiz, 'dist', 'link', 'pantoja-intimee.html'), fragmento);
 
 const saida = path.join(raiz, 'dist', 'pantoja-intimee-demo.html');
 fs.mkdirSync(path.dirname(saida), { recursive: true });

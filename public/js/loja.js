@@ -7,6 +7,8 @@ let config = { whatsapp: '', cartaoAtivo: false, freteFixo: 0, freteGratisAParti
 let categorias = [];
 /* Sacola: [{variacaoId, qtd, slug, nome, rotulo, preco, imagem, icone, cores}] */
 let sacola = ler('pi_sacola_v2', []);
+/* Link do último pedido feito pelo WhatsApp, caso o navegador bloqueie a nova aba */
+let ultimoPedidoZap = null;
 
 const linkZap = (texto) => `https://wa.me/${config.whatsapp}?text=${encodeURIComponent(texto)}`;
 const rotuloVar = (r) => (r === 'Único' ? '' : r);
@@ -119,7 +121,7 @@ async function telaInicio() {
           <a href="/loja?categoria=kits" class="btn btn-linha">Kits presente</a>
         </div>
         <div class="hero-stats">
-          <div><b>+600</b><span>clientes</span></div>
+          <div><b>+600</b><span>seguidores</span></div>
           <div><b>100%</b><span>discreto</span></div>
           <div><b>BR</b><span>envio nacional</span></div>
         </div>
@@ -180,12 +182,12 @@ async function telaInicio() {
 
   <section id="feedbacks" style="background:var(--rosa-claro)">
     <div class="container">
-      <div class="titulo-sec rev"><span class="script">Feedbacks</span><h2>Quem compra, ama</h2><div class="ornamento">♥</div></div>
-      <!-- Exemplos: substitua por depoimentos reais das clientes -->
+      <div class="titulo-sec rev"><span class="script">Feedbacks</span><h2>Quem compra, ama</h2>
+        <p>Depoimentos de exemplo: troque pelos feedbacks reais das clientes.</p><div class="ornamento">♥</div></div>
       <div class="depo-wrap">
-        <div class="depo rev"><div class="estrelas">★★★★★</div><p>A calcinha de borboleta é ainda mais linda pessoalmente! Chegou super rápido e a embalagem é um luxo.</p><div class="depo-autor"><div class="avatar">J</div><div><b>Juliana M.</b><br><small>Palmas - TO</small></div></div></div>
-        <div class="depo rev"><div class="estrelas">★★★★★</div><p>Comprei o kit para presentear e foi um sucesso. Atendimento carinhoso do começo ao fim.</p><div class="depo-autor"><div class="avatar">R</div><div><b>Rafaela S.</b><br><small>Gurupi - TO</small></div></div></div>
-        <div class="depo rev"><div class="estrelas">★★★★★</div><p>Qualidade incrível, a renda é macia e o caimento perfeito. Já virei cliente fiel!</p><div class="depo-autor"><div class="avatar">C</div><div><b>Camila A.</b><br><small>Goiânia - GO</small></div></div></div>
+        <div class="depo rev"><div class="estrelas">★★★★★</div><p>A calcinha de borboleta é ainda mais linda pessoalmente! Chegou super rápido e a embalagem é um luxo.</p><div class="depo-autor"><div class="avatar">♥</div><div><b>Exemplo de depoimento</b><br><small>Cliente de Palmas - TO</small></div></div></div>
+        <div class="depo rev"><div class="estrelas">★★★★★</div><p>Comprei o kit para presentear e foi um sucesso. Atendimento carinhoso do começo ao fim.</p><div class="depo-autor"><div class="avatar">♥</div><div><b>Exemplo de depoimento</b><br><small>Cliente de Gurupi - TO</small></div></div></div>
+        <div class="depo rev"><div class="estrelas">★★★★★</div><p>Qualidade incrível, a renda é macia e o caimento perfeito. Já virei cliente fiel!</p><div class="depo-autor"><div class="avatar">♥</div><div><b>Exemplo de depoimento</b><br><small>Cliente de Goiânia - GO</small></div></div></div>
       </div>
     </div>
   </section>
@@ -349,10 +351,10 @@ async function telaFinalizar() {
         <div class="erro-msg" id="erroPedido" ${erroResumo ? '' : 'hidden'}>${esc(erroResumo)}</div>
         <div class="pagamentos">
           ${config.cartaoAtivo ? `<button class="btn btn-vinho" data-canal="cartao" type="submit">
-            <svg width="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Pagar com cartão</button>` : ''}
+            <svg width="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Pagar com cartão${DEMO ? ' (simulação)' : ''}</button>` : ''}
           <button class="btn btn-zap" data-canal="whatsapp" type="submit">
             <svg width="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2z"/></svg>Enviar pedido pelo WhatsApp</button>
-          <p class="nota">${config.cartaoAtivo ? 'Cartão: pagamento seguro processado pelo Stripe. ' : ''}WhatsApp: combinamos o pagamento (Pix ou cartão) direto com você, sem taxas.</p>
+          <p class="nota">${DEMO ? 'Demonstração: o cartão é simulado e nenhum valor é cobrado. ' : config.cartaoAtivo ? 'Cartão: pagamento seguro processado pelo Stripe. ' : ''}WhatsApp: combinamos o pagamento (Pix ou cartão) direto com você, sem taxas.</p>
         </div>
       </form>
       <aside class="caixa resumo">
@@ -382,11 +384,13 @@ async function telaFinalizar() {
     const botoes = app.querySelectorAll('[data-canal]');
     botoes.forEach(b => b.disabled = true);
     // abre a aba já no clique (evita bloqueio de pop-up) e depois aponta para o WhatsApp
-    const aba = canal === 'whatsapp' ? window.open('', '_blank') : null;
+    // (na demonstração o link fica num botão da página do pedido, pois a nova aba é bloqueada)
+    const aba = canal === 'whatsapp' && !DEMO ? window.open('', '_blank') : null;
     try {
       const r = await api(`/api/pedidos/${canal}`, { metodo: 'POST', corpo: { itens: itensParaApi(), cliente: dados } });
       sacola = []; salvarSacola();
       if (canal === 'whatsapp') {
+        ultimoPedidoZap = { codigo: r.codigo, url: r.url };
         if (aba) aba.location = r.url; else if (!DEMO) location.href = r.url;
         ir(`/pedido/${r.codigo}`);
       } else if (DEMO) {
@@ -408,6 +412,7 @@ async function telaPedido(codigo) {
   if (sessionId && p.status === 'pago') { sacola = []; salvarSacola(); }
   document.title = `Pedido #${p.codigo} · Pantoja Intimeé`;
   const pago = ['pago', 'enviado', 'entregue'].includes(p.status);
+  const zapPedido = p.status === 'novo' && ultimoPedidoZap?.codigo === p.codigo ? ultimoPedidoZap.url : null;
   const titulo = p.status === 'cancelado' ? 'Pedido cancelado'
     : pago ? 'Pedido confirmado!'
     : p.canal === 'whatsapp' ? 'Pedido enviado!' : 'Aguardando pagamento';
@@ -427,7 +432,7 @@ async function telaPedido(codigo) {
       <div class="linha-total grande"><span>Total</span><b>${brl(p.total)}</b></div>
     </div>
     <div class="cta-row" style="justify-content:center">
-      <a class="btn btn-zap" target="_blank" rel="noopener" href="${linkZap(`Olá! Sobre o meu pedido #${p.codigo} 💋`)}">Falar no WhatsApp</a>
+      <a class="btn btn-zap" target="_blank" rel="noopener" href="${esc(zapPedido ?? linkZap(`Olá! Sobre o meu pedido #${p.codigo} 💋`))}">${zapPedido ? 'Enviar pedido no WhatsApp' : 'Falar no WhatsApp'}</a>
       <a class="btn btn-borda" href="/loja">Continuar comprando</a>
     </div>
   </div></div>`;

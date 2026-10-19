@@ -45,5 +45,30 @@ export async function api(caminho, { metodo = 'GET', corpo, form } = {}) {
   return dados;
 }
 
+/* Confirmação desenhada na própria página (páginas incorporadas não exibem o confirm() do navegador) */
+export function confirmar(mensagem, { ok = 'Confirmar', cancelar = 'Cancelar' } = {}) {
+  return new Promise((resolver) => {
+    const fundo = document.createElement('div');
+    fundo.style.cssText = 'position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:16px;background:rgba(34,3,10,.55)';
+    fundo.innerHTML = `<div role="alertdialog" aria-modal="true" style="background:#fff;color:#2a1216;border-radius:16px;padding:1.5rem;max-width:420px;width:100%;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);font-family:Montserrat,system-ui,sans-serif">
+      <p style="white-space:pre-line;line-height:1.5;margin:0 0 1.2rem"></p>
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;flex-wrap:wrap">
+        <button type="button" data-r="0" style="font:inherit;font-weight:600;padding:.65rem 1.1rem;border-radius:10px;border:1px solid #efdde1;background:#fff;color:#5b0a12;cursor:pointer">${esc(cancelar)}</button>
+        <button type="button" data-r="1" style="font:inherit;font-weight:600;padding:.65rem 1.1rem;border-radius:10px;border:0;background:#5b0a12;color:#fff;cursor:pointer">${esc(ok)}</button>
+      </div></div>`;
+    fundo.querySelector('p').textContent = mensagem;
+    const fechar = (r) => { fundo.remove(); document.removeEventListener('keydown', tecla); resolver(r); };
+    const tecla = (e) => { if (e.key === 'Escape') fechar(false); };
+    fundo.addEventListener('click', (e) => {
+      if (e.target === fundo) fechar(false);
+      const b = e.target.closest('[data-r]');
+      if (b) fechar(b.dataset.r === '1');
+    });
+    document.addEventListener('keydown', tecla);
+    document.body.append(fundo);
+    fundo.querySelector('[data-r="1"]').focus();
+  });
+}
+
 export function guardar(chave, valor) { try { localStorage.setItem(chave, JSON.stringify(valor)); } catch {} }
 export function ler(chave, padrao) { try { return JSON.parse(localStorage.getItem(chave)) ?? padrao; } catch { return padrao; } }
