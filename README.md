@@ -25,6 +25,12 @@ Loja virtual de moda íntima feminina da **Pantoja Intimeé** ([@pantojaintimee0
 
 Os preços e o estoque são sempre conferidos no servidor, então ninguém consegue alterar o valor pelo navegador.
 
+## Site de teste gratuito (GitHub Pages)
+
+A cada envio para a `main`, o GitHub monta a demonstração e publica em
+**https://grazzianojunior929-boop.github.io/pantoja-intimee/**.
+Para ativar (uma vez só): no repositório, abra **Settings → Pages** e, em **Source**, escolha **GitHub Actions**.
+
 ## Demonstração em um arquivo só
 
 `npm run demo` gera `dist/pantoja-intimee-demo.html`, com a loja e o painel num único arquivo que abre direto no navegador, sem servidor.
