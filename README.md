@@ -25,6 +25,15 @@ Loja virtual de moda íntima feminina da **Pantoja Intimeé** ([@pantojaintimee0
 
 Os preços e o estoque são sempre conferidos no servidor, então ninguém consegue alterar o valor pelo navegador.
 
+## Testar no Windows (sem programar)
+
+1. Instale o **Node.js** (versão LTS) em <https://nodejs.org/pt>
+2. Extraia a pasta da loja e dê dois cliques em **`iniciar-loja.bat`**
+3. O navegador abre a loja em `http://localhost:3000`. O painel fica em `http://localhost:3000/admin`
+   (login de teste: `admin@pantojaintimee.com.br` / `pantoja123`)
+
+Para desligar, feche a janela preta. Os pedidos, produtos e fotos ficam salvos na pasta `data`.
+
 ## Rodar no computador
 
 Requer **Node.js 22.5 ou mais novo**.
