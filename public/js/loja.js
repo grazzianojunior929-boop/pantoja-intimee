@@ -1,4 +1,4 @@
-import { ICONES, esc, brl, ilustracao, midia, api, guardar, ler } from './comum.js';
+import { ICONES, esc, brl, ilustracao, midia, api, guardar, ler, DEMO } from './comum.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const app = $('#app');
@@ -22,9 +22,14 @@ const ROTAS = [
   [/^\/pedido\/([A-Za-z0-9]+)\/?$/, telaPedido],
 ];
 
+/* Rota atual. Na demonstração ela fica depois do # (ex.: #/loja?categoria=kits) */
+function local() {
+  return DEMO ? new URL(location.hash.slice(1) || '/', 'http://demo.local') : new URL(location.href);
+}
+
 async function rotear() {
   fecharTudo();
-  const caminho = location.pathname;
+  const { pathname: caminho, hash } = local();
   const rota = ROTAS.find(([re]) => re.test(caminho));
   app.innerHTML = '<div class="carregando"></div>';
   try {
@@ -33,12 +38,16 @@ async function rotear() {
   } catch (e) {
     app.innerHTML = `<div class="container pagina"><div class="status-card"><h1>Ops!</h1><p style="margin:1rem 0">${esc(e.message)}</p><a class="btn btn-vinho" href="/loja">Voltar à loja</a></div></div>`;
   }
-  if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+  if (hash) document.getElementById(hash.slice(1))?.scrollIntoView();
   else window.scrollTo({ top: 0, behavior: 'instant' });
   revelar();
 }
 
 export function ir(url) {
+  if (DEMO) {
+    if (location.hash === '#' + url) rotear(); else location.hash = url;
+    return;
+  }
   history.pushState(null, '', url);
   rotear();
 }
@@ -46,6 +55,11 @@ export function ir(url) {
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href]');
   if (!a || a.target === '_blank' || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  if (DEMO) {
+    const href = a.getAttribute('href');
+    if (href.startsWith('/')) { e.preventDefault(); ir(href); }
+    return;
+  }
   const url = new URL(a.href, location.href);
   if (url.origin !== location.origin || url.pathname.startsWith('/admin') || url.pathname.startsWith('/uploads')) return;
   e.preventDefault();
@@ -57,7 +71,8 @@ document.addEventListener('click', (e) => {
   }
   ir(url.pathname + url.search + url.hash);
 });
-window.addEventListener('popstate', rotear);
+if (DEMO) window.addEventListener('hashchange', () => { if (!location.hash.startsWith('#/admin')) rotear(); });
+else window.addEventListener('popstate', rotear);
 
 /* =========================================================
    COMPONENTES
@@ -190,7 +205,7 @@ async function telaInicio() {
 }
 
 async function telaLoja() {
-  const qs = new URLSearchParams(location.search);
+  const qs = new URLSearchParams(local().search);
   const categoria = qs.get('categoria') ?? '';
   const busca = qs.get('busca') ?? '';
   const cat = categorias.find(c => c.slug === categoria);
@@ -315,7 +330,7 @@ async function telaFinalizar() {
     sincronizarPrecos(resumo.linhas);
   } catch (e) { erroResumo = e.message; }
   const cliente = ler('pi_cliente', {});
-  const cancelado = new URLSearchParams(location.search).has('cancelado');
+  const cancelado = new URLSearchParams(local().search).has('cancelado');
 
   app.innerHTML = `
   <div class="container pagina">
@@ -372,8 +387,10 @@ async function telaFinalizar() {
       const r = await api(`/api/pedidos/${canal}`, { metodo: 'POST', corpo: { itens: itensParaApi(), cliente: dados } });
       sacola = []; salvarSacola();
       if (canal === 'whatsapp') {
-        if (aba) aba.location = r.url; else location.href = r.url;
+        if (aba) aba.location = r.url; else if (!DEMO) location.href = r.url;
         ir(`/pedido/${r.codigo}`);
+      } else if (DEMO) {
+        ir(r.url);
       } else {
         location.href = r.url;
       }
@@ -386,7 +403,7 @@ async function telaFinalizar() {
 }
 
 async function telaPedido(codigo) {
-  const sessionId = new URLSearchParams(location.search).get('session_id');
+  const sessionId = new URLSearchParams(local().search).get('session_id');
   const p = await api(`/api/pedidos/${encodeURIComponent(codigo)}${sessionId ? `?session_id=${encodeURIComponent(sessionId)}` : ''}`);
   if (sessionId && p.status === 'pago') { sacola = []; salvarSacola(); }
   document.title = `Pedido #${p.codigo} · Pantoja Intimeé`;
@@ -414,7 +431,7 @@ async function telaPedido(codigo) {
       <a class="btn btn-borda" href="/loja">Continuar comprando</a>
     </div>
   </div></div>`;
-  if (p.status === 'aguardando_pagamento') setTimeout(() => { if (location.pathname.endsWith(p.codigo)) rotear(); }, 5000);
+  if (p.status === 'aguardando_pagamento') setTimeout(() => { if (local().pathname.endsWith(p.codigo)) rotear(); }, 5000);
 }
 
 function telaNaoEncontrada() {

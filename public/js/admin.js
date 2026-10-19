@@ -1,8 +1,14 @@
-import { ICONES, NOMES_ICONES, esc, brl, midia, ilustracao, api } from './comum.js';
+import { ICONES, NOMES_ICONES, esc, brl, midia, ilustracao, api, DEMO } from './comum.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const raiz = $('#raiz');
 let STATUS = {};
+
+/* Abas ficam no # da página (na demonstração: #/admin/<aba>, para não misturar com a loja) */
+const hrefAba = (id) => (DEMO ? `#/admin/${id}` : `#${id}`);
+const abaAtual = () => (DEMO ? location.hash.replace(/^#\/admin\/?/, '') : location.hash.slice(1));
+const irAba = (id) => { location.hash = hrefAba(id).slice(1); };
+const LINK_LOJA = DEMO ? 'href="#/"' : 'href="/" target="_blank" rel="noopener"';
 let categorias = [];
 
 const IC = {
@@ -28,7 +34,7 @@ const dataBR = (iso) => new Date(iso.replace(' ', 'T') + 'Z').toLocaleString('pt
 
 let tt;
 function toast(txt) {
-  const t = $('#toast'); t.textContent = txt; t.classList.add('on');
+  const t = $('#toastAdmin'); t.textContent = txt; t.classList.add('on');
   clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2600);
 }
 
@@ -39,11 +45,12 @@ function telaLogin() {
   raiz.innerHTML = `
   <div class="login"><form id="formLogin">
     <div class="marca">${ICONES.coroa}<h1>PANTOJA INTIMEÉ</h1><p>Painel da loja</p></div>
-    <div class="campo"><label for="email">E-mail</label><input id="email" name="email" type="email" autocomplete="username" required></div>
-    <div class="campo"><label for="senha">Senha</label><input id="senha" name="senha" type="password" autocomplete="current-password" required></div>
+    ${DEMO ? '<p class="dica" style="text-align:center">Demonstração: os dados já estão preenchidos, é só clicar em Entrar.</p>' : ''}
+    <div class="campo"><label for="email">E-mail</label><input id="email" name="email" type="email" autocomplete="username" required value="${DEMO ? 'admin@pantojaintimee.com.br' : ''}"></div>
+    <div class="campo"><label for="senha">Senha</label><input id="senha" name="senha" type="password" autocomplete="current-password" required value="${DEMO ? 'pantoja123' : ''}"></div>
     <div class="erro" id="erroLogin" hidden></div>
     <button class="btn btn-vinho" style="padding:.9rem">Entrar</button>
-    <a href="/" class="dica" style="text-align:center">← Voltar para a loja</a>
+    <a ${LINK_LOJA.replace(/ target.*/, '')} class="dica" style="text-align:center">← Voltar para a loja</a>
   </form></div>`;
   $('#email').focus();
   $('#formLogin').onsubmit = async (e) => {
@@ -69,22 +76,23 @@ function montarLayout() {
   <div class="layout">
     <nav class="lateral">
       <div class="marca">${ICONES.coroa}<span><b>PANTOJA<br>INTIMEÉ</b><small>PAINEL</small></span></div>
-      ${ABAS.map(([id, nome]) => `<a class="aba" href="#${id}" data-aba="${id}">${IC[id]}<span>${nome}</span></a>`).join('')}
+      ${ABAS.map(([id, nome]) => `<a class="aba" href="${hrefAba(id)}" data-aba="${id}">${IC[id]}<span>${nome}</span></a>`).join('')}
       <div class="rodape">
-        <a class="aba" href="/" target="_blank" rel="noopener">${IC.loja}<span>Ver loja</span></a>
+        <a class="aba" ${LINK_LOJA}>${IC.loja}<span>Ver loja</span></a>
         <button class="aba" id="sair">${IC.sair}<span>Sair</span></button>
       </div>
     </nav>
     <main class="conteudo" id="conteudo"></main>
   </div>
-  <div class="veu" id="veu"></div>
+  <div class="veu" id="veuAdmin"></div>
   <aside class="editor" id="editor" aria-label="Editor"></aside>`;
   $('#sair').onclick = async () => { await api('/api/admin/logout', { metodo: 'POST' }).catch(() => {}); telaLogin(); };
-  $('#veu').onclick = fecharEditor;
+  $('#veuAdmin').onclick = fecharEditor;
 }
 
 async function rotear() {
-  const aba = TELAS[location.hash.slice(1)] ? location.hash.slice(1) : 'resumo';
+  const pedida = abaAtual();
+  const aba = TELAS[pedida] ? pedida : 'resumo';
   document.querySelectorAll('[data-aba]').forEach(a => a.classList.toggle('on', a.dataset.aba === aba));
   const c = $('#conteudo');
   c.innerHTML = '<div class="carregando"></div>';
@@ -94,7 +102,7 @@ async function rotear() {
     c.innerHTML = `<div class="erro">${esc(e.message)}</div>`;
   }
 }
-window.addEventListener('hashchange', () => { if ($('#conteudo')) rotear(); });
+window.addEventListener('hashchange', () => { if ($('#conteudo') && (!DEMO || location.hash.startsWith('#/admin'))) rotear(); });
 
 /* =========================================================
    RESUMO
@@ -104,9 +112,9 @@ async function telaResumo(c) {
   c.innerHTML = `
     <div class="topo"><h1>Olá! 👑</h1><div class="acoes"><button class="btn btn-vinho" id="novoProd">${IC.mais}Novo produto</button></div></div>
     <div class="kpis">
-      <a class="cartao kpi" href="#pedidos" style="text-decoration:none"><span>Pedidos para tratar</span><b>${r.pedidosNovos}</b></a>
+      <a class="cartao kpi" href="${hrefAba('pedidos')}" style="text-decoration:none"><span>Pedidos para tratar</span><b>${r.pedidosNovos}</b></a>
       <div class="cartao kpi"><span>Vendas confirmadas no mês</span><b>${brl(r.faturamentoMes)}</b></div>
-      <a class="cartao kpi" href="#produtos" style="text-decoration:none"><span>Produtos ativos</span><b>${r.produtosAtivos}</b></a>
+      <a class="cartao kpi" href="${hrefAba('produtos')}" style="text-decoration:none"><span>Produtos ativos</span><b>${r.produtosAtivos}</b></a>
     </div>
     <div class="cartao">
       <h3 style="font-family:var(--serif);font-size:1.4rem;color:var(--vinho);margin-bottom:.6rem">Estoque baixo</h3>
@@ -322,7 +330,7 @@ async function abrirEditorProduto(id) {
     try {
       await api(id ? `/api/admin/produtos/${id}` : '/api/admin/produtos', { metodo: id ? 'PUT' : 'POST', corpo });
       fecharEditor(); toast('Produto salvo ✓');
-      location.hash === '#produtos' ? rotear() : (location.hash = 'produtos');
+      abaAtual() === 'produtos' ? rotear() : irAba('produtos');
     } catch (err) { falha(err.message); btn.disabled = false; }
   };
 
@@ -334,11 +342,11 @@ async function abrirEditorProduto(id) {
     } catch (err) { toast(err.message); }
   });
 
-  ed.classList.add('on'); $('#veu').classList.add('on');
+  ed.classList.add('on'); $('#veuAdmin').classList.add('on');
   setTimeout(() => form.nome.focus(), 350);
 }
 
-function fecharEditor() { $('#editor')?.classList.remove('on'); $('#veu')?.classList.remove('on'); }
+function fecharEditor() { $('#editor')?.classList.remove('on'); $('#veuAdmin')?.classList.remove('on'); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharEditor(); });
 
 /* =========================================================

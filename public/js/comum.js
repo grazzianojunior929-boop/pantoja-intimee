@@ -1,5 +1,8 @@
 /* Utilitários compartilhados entre a loja e o painel */
 
+/* Na demonstração (arquivo único, sem servidor) a API roda no próprio navegador */
+export const DEMO = !!globalThis.__DEMO__;
+
 export const ICONES = {
   coroa: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 34 L10 10 L22 24 L32 4 L42 24 L54 10 L58 34 Z"/><circle cx="10" cy="10" r="2.4" fill="currentColor"/><circle cx="32" cy="4" r="2.4" fill="currentColor"/><circle cx="54" cy="10" r="2.4" fill="currentColor"/></svg>',
   sutia: '<svg viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M14 4v14M50 4v14"/><path d="M4 20c4-4 10-4 14 0 4 6 4 14 14 14s10-8 14-14c4-4 10-4 14 0v10c-6 10-16 14-28 14S10 40 4 30z"/><path d="M32 34v-6"/><circle cx="32" cy="27" r="2" fill="currentColor"/></svg>',
@@ -28,6 +31,7 @@ export function midia(p, indice = 0) {
 }
 
 export async function api(caminho, { metodo = 'GET', corpo, form } = {}) {
+  if (DEMO) return globalThis.__DEMO_API__(caminho, { metodo, corpo, form });
   const opts = { method: metodo, headers: {}, credentials: 'same-origin' };
   if (form) opts.body = form;
   else if (corpo !== undefined) { opts.body = JSON.stringify(corpo); opts.headers['Content-Type'] = 'application/json'; }

@@ -25,6 +25,11 @@ Loja virtual de moda íntima feminina da **Pantoja Intimeé** ([@pantojaintimee0
 
 Os preços e o estoque são sempre conferidos no servidor, então ninguém consegue alterar o valor pelo navegador.
 
+## Demonstração em um arquivo só
+
+`npm run demo` gera `dist/pantoja-intimee-demo.html`, com a loja e o painel num único arquivo que abre direto no navegador, sem servidor.
+Os dados ficam só no navegador de quem abre, e o pagamento com cartão é simulado. Serve para mostrar e avaliar, não para vender.
+
 ## Testar no Windows (sem programar)
 
 1. Instale o **Node.js** (versão LTS) em <https://nodejs.org/pt>
