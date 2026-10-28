@@ -1,6 +1,21 @@
 # Pantoja Intimeé · Loja Virtual
 
+[![Testes](https://github.com/grazzianojunior929-boop/pantoja-intimee/actions/workflows/testes.yml/badge.svg)](https://github.com/grazzianojunior929-boop/pantoja-intimee/actions/workflows/testes.yml)
+
 Loja virtual de moda íntima feminina da **Pantoja Intimeé** ([@pantojaintimee01](https://www.instagram.com/pantojaintimee01/)), Aliança - TO.
+
+**Demonstração no ar:** https://grazzianojunior929-boop.github.io/pantoja-intimee/ (loja e painel num arquivo só, dados simulados no navegador)
+
+## Destaques técnicos
+
+- **E-commerce completo em Node.js puro:** Express 5 e o SQLite embutido no Node (`node:sqlite`), sem ORM nem framework de front-end.
+- **Preço e estoque decididos no servidor:** o carrinho é recalculado com os preços do banco, então ninguém altera valores pelo navegador. O estoque baixa ao confirmar o pedido e volta ao cancelar.
+- **Pagamento com Stripe Checkout,** confirmado por webhook com assinatura verificada.
+- **Painel administrativo com login seguro:** senhas com `scrypt`, comparação em tempo constante e cookie de sessão `httpOnly` / `sameSite`.
+- **Testes automáticos** (`node --test`) do catálogo, carrinho, pedidos, Stripe e painel, rodando no GitHub Actions a cada envio.
+- **Pronto para produção:** `Dockerfile`, `render.yaml` e publicação automática da demonstração no GitHub Pages.
+
+**Tecnologias:** Node.js 22 · Express 5 · SQLite · Stripe · HTML/CSS/JavaScript · Docker · GitHub Actions
 
 ## O que tem
 
